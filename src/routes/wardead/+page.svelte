@@ -311,23 +311,42 @@
 						<div class="viz-col">
 							<!-- Stacked Bar Container -->
 							<div class="viz-track">
-								<!-- South Base (Orange) -->
-								{#if s.south_staffs_count > 0}
-									<div
-										class="viz-segment s"
-										style="width: {(s.south_staffs_count / maxSurnameCount) * 100}%"
-									>
-										<span class="seg-label">{s.south_staffs_count}</span>
-									</div>
-								{/if}
-								<!-- North Top (Blue) -->
-								{#if s.north_staffs_count > 0}
-									<div
-										class="viz-segment n"
-										style="width: {(s.north_staffs_count / maxSurnameCount) * 100}%"
-									>
-										<span class="seg-label">{s.north_staffs_count}</span>
-									</div>
+								{#if surnameFilter === 'north_staffs_count'}
+									<!-- North First -->
+									{#if s.north_staffs_count > 0}
+										<div
+											class="viz-segment n"
+											style="width: {(s.north_staffs_count / maxSurnameCount) * 100}%"
+										>
+											<span class="seg-label">{s.north_staffs_count}</span>
+										</div>
+									{/if}
+									{#if s.south_staffs_count > 0}
+										<div
+											class="viz-segment s"
+											style="width: {(s.south_staffs_count / maxSurnameCount) * 100}%"
+										>
+											<span class="seg-label">{s.south_staffs_count}</span>
+										</div>
+									{/if}
+								{:else}
+									<!-- South First (Default) -->
+									{#if s.south_staffs_count > 0}
+										<div
+											class="viz-segment s"
+											style="width: {(s.south_staffs_count / maxSurnameCount) * 100}%"
+										>
+											<span class="seg-label">{s.south_staffs_count}</span>
+										</div>
+									{/if}
+									{#if s.north_staffs_count > 0}
+										<div
+											class="viz-segment n"
+											style="width: {(s.north_staffs_count / maxSurnameCount) * 100}%"
+										>
+											<span class="seg-label">{s.north_staffs_count}</span>
+										</div>
+									{/if}
 								{/if}
 							</div>
 						</div>
