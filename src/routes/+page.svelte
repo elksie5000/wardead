@@ -18,18 +18,28 @@
 	const notableDates = [
 		{
 			date: '1915-10-13',
-			label: '13 Oct 1915 - The Attack on the Hohenzollern Redoubt (Battle of Loos)'
+			lines: ['13 Oct 1915', 'Attack on the Hohenzollern', 'Redoubt (Battle of Loos)']
 		},
-		{ date: '1916-07-01', label: '1 Jul 1916 - First Day of the Somme (Gommecourt)' },
-		{ date: '1918-03-20', label: '20 Mar 1918 - The German Spring Offensive (Operation Michael)' }
+		{
+			date: '1916-07-01',
+			lines: ['1 Jul 1916', 'First Day of the Somme', '(Gommecourt)']
+		},
+		{
+			date: '1918-03-20',
+			lines: ['20 Mar 1918', 'The German Spring Offensive', '(Operation Michael)']
+		}
 	];
 
 	let annotations = [];
 	$: if (timeline && timeline.length) {
 		annotations = notableDates
-			.map((d) => {
+			.map((d, i) => {
 				const idx = timeline.findIndex((t) => t.iso_date === d.date);
-				return idx !== -1 ? { x: idx, label: d.label } : null;
+				// Stagger height: index 0 -> 20, 1 -> 80, 2 -> 20.
+				// This prevents the middle one (Somme) from clashing with the others if they are close.
+				// 1916 is fairly close to 1915 so staggering helps.
+				const yOffset = i % 2 === 0 ? 20 : 80;
+				return idx !== -1 ? { x: idx, lines: d.lines, y: yOffset } : null;
 			})
 			.filter(Boolean);
 	}
@@ -229,12 +239,16 @@
 						/>
 						<text
 							x={ann.x + 4}
-							y="15"
-							font-size="10"
+							y={ann.y}
+							font-size="12"
 							fill="#333"
 							font-weight="bold"
-							style="text-shadow: 0 0 2px white;">{ann.label}</text
+							style="text-shadow: 0 0 4px white;"
 						>
+							{#each ann.lines as line, i}
+								<tspan x={ann.x + 4} dy={i === 0 ? 0 : '1.1em'}>{line}</tspan>
+							{/each}
+						</text>
 					{/each}
 
 					{#each timeline as day, i}
