@@ -41,6 +41,9 @@
 
 	$: maxRankCount = sortedRanks.length > 0 ? sortedRanks[0].total_deaths : 1;
 
+	$: maxSurnameCount =
+		displaySurnames.length > 0 ? Math.max(...displaySurnames.map((s) => s.total_count)) : 1;
+
 	// --- Surname Filtering ---
 	let surnameFilter = 'total_count'; // total_count, north_staffs_count, south_staffs_count
 	$: displaySurnames = [...surnames]
@@ -276,7 +279,13 @@
 		<!-- Surnames -->
 		<section class="card">
 			<div class="card-header-flex">
-				<h3>Top 20 Surnames</h3>
+				<div class="rh-col">
+					<h3>Top 20 Surnames</h3>
+					<div class="legend mini">
+						<div class="legend-item"><span class="swatch north"></span> North</div>
+						<div class="legend-item"><span class="swatch south"></span> South</div>
+					</div>
+				</div>
 				<div class="toggle-group">
 					<button
 						class:active={surnameFilter === 'total_count'}
@@ -300,12 +309,29 @@
 					<div class="surname-row" animate:flip={{ duration: 450, easing: quintOut }}>
 						<div class="name-col">{s.surname}</div>
 						<div class="viz-col">
-							<div class="viz-bar-group">
-								<div class="viz-bar n" style="flex: {s.north_staffs_count};"></div>
-								<div class="viz-bar s" style="flex: {s.south_staffs_count};"></div>
+							<!-- Stacked Bar Container -->
+							<div class="viz-track">
+								<!-- South Base (Orange) -->
+								{#if s.south_staffs_count > 0}
+									<div
+										class="viz-segment s"
+										style="width: {(s.south_staffs_count / maxSurnameCount) * 100}%"
+									>
+										<span class="seg-label">{s.south_staffs_count}</span>
+									</div>
+								{/if}
+								<!-- North Top (Blue) -->
+								{#if s.north_staffs_count > 0}
+									<div
+										class="viz-segment n"
+										style="width: {(s.north_staffs_count / maxSurnameCount) * 100}%"
+									>
+										<span class="seg-label">{s.north_staffs_count}</span>
+									</div>
+								{/if}
 							</div>
 						</div>
-						<div class="count-col">{s[surnameFilter]}</div>
+						<div class="count-col">{s.total_count}</div>
 					</div>
 				{/each}
 			</div>
@@ -590,9 +616,19 @@
 	.card-header-flex {
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
+		align-items: flex-end; /* Align bottom to match legend */
 		margin-bottom: 16px;
 	}
+	.rh-col {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.legend.mini {
+		font-size: 0.75rem;
+		margin-top: 2px;
+	}
+
 	.toggle-group {
 		display: flex;
 		gap: 4px;
@@ -644,21 +680,39 @@
 		flex: 1;
 		padding: 0 12px;
 	}
-	.viz-bar-group {
+
+	/* Surname Viz Track */
+	.viz-track {
 		display: flex;
-		height: 8px;
+		height: 18px;
+		width: 100%;
 		border-radius: 4px;
 		overflow: hidden;
-		background: #eee;
+		background: #f5f5f5; /* Empty track bg */
 	}
-	.viz-bar {
+	.viz-segment {
 		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden; /* Clip label if too small */
+		min-width: 0;
+		transition: width 0.5s ease-out;
 	}
-	.viz-bar.n {
+	.viz-segment.n {
 		background: #004488;
 	}
-	.viz-bar.s {
+	.viz-segment.s {
 		background: #cc6600;
+	}
+
+	.seg-label {
+		color: white;
+		font-size: 0.7rem;
+		font-weight: 700;
+		white-space: nowrap;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+		padding: 0 2px;
 	}
 
 	.count-col {
