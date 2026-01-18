@@ -16,9 +16,12 @@
 
 	// --- Annotations ---
 	const notableDates = [
-		{ date: '1915-10-13', label: '13 Oct 1915' },
-		{ date: '1916-07-01', label: '1 Jul 1916' },
-		{ date: '1918-03-20', label: '20 Mar 1918' }
+		{
+			date: '1915-10-13',
+			label: '13 Oct 1915 - The Attack on the Hohenzollern Redoubt (Battle of Loos)'
+		},
+		{ date: '1916-07-01', label: '1 Jul 1916 - First Day of the Somme (Gommecourt)' },
+		{ date: '1918-03-20', label: '20 Mar 1918 - The German Spring Offensive (Operation Michael)' }
 	];
 
 	let annotations = [];
@@ -156,7 +159,7 @@
 
 <main class="dashboard">
 	<div class="intro-header">
-		<h1>Staffordshire War Dead</h1>
+		<h1>Staffordshire War Dead: Data revisited</h1>
 		<p class="intro-text">
 			I created a simple visualisation to remember the 7,000 or so men from the North Staffordshire
 			regiment who were killed during the first world war. This project began in 2012 and was
@@ -181,7 +184,7 @@
 	<section class="card timeline-section">
 		<header class="section-header">
 			<div>
-				<h2>Daily Death Timeline</h2>
+				<h2>Daily Death Toll over 4 years</h2>
 				<p class="subtitle">1914 &mdash; 1918</p>
 			</div>
 
@@ -301,7 +304,7 @@
 	<div class="grid-2">
 		<!-- Rank Stats -->
 		<section class="card">
-			<h3>Deaths by Rank</h3>
+			<h3>Deaths by serviceman Rank</h3>
 			<div class="chart-container">
 				{#each sortedRanks as r}
 					<div class="rank-row">
@@ -321,7 +324,7 @@
 		<section class="card">
 			<div class="card-header-flex">
 				<div class="rh-col">
-					<h3>Top 20 Surnames</h3>
+					<h3>Fatalities by surname and regiment (North/ South Staffordshire)</h3>
 					<div class="legend mini">
 						<div class="legend-item"><span class="swatch north"></span> North</div>
 						<div class="legend-item"><span class="swatch south"></span> South</div>
