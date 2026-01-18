@@ -67,8 +67,8 @@
 		if (typeof window !== 'undefined') {
 			const L = await import('leaflet');
 
-			// Initialize map
-			const map = L.map(mapContainer).setView([50.5, 3.0], 8);
+			// Initialize map - Center roughly between Manchester (West/Left) and Frontline (East/Right)
+			const map = L.map(mapContainer).setView([51.8, 0.4], 7);
 
 			L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png', {
 				attribution:
@@ -77,17 +77,29 @@
 			}).addTo(map);
 
 			// Add circles
-			mapData.forEach((site) => {
-				if (site.latitude && site.longitude) {
-					// Ensure coords are numbers
-					const lat = Number(site.latitude);
-					const lng = Number(site.longitude);
+			console.log('Map Data Length:', mapData.length);
+
+			mapData.forEach((site, i) => {
+				if (i < 3) console.log('Processing site:', site); // Debug first few
+
+				// Check for coordinates array [lat, lng]
+				if (site.coordinates && site.coordinates.length === 2) {
+					// Extract lat/lng from array
+					// PostGIS often returns [long, lat] or [lat, long]. Debug showed 40.X, 26.X for Gallipoli.
+					// Gallipoli is 40N, 26E.
+					// If logs showed [40.4, 26.3], then coordinates[0] is LAT, coordinates[1] is LNG.
+					const latitude = Number(site.coordinates[0]);
+					const longitude = Number(site.coordinates[1]);
+
+					// Fallback for num_commemorated if missing
+					// If missing, count the fallen_list
+					const count = site.num_commemorated || (site.fallen_list ? site.fallen_list.length : 1);
 
 					// Basic validation
-					if (!isNaN(lat) && !isNaN(lng)) {
-						const radius = Math.sqrt(site.num_commemorated || 1) * 150;
+					if (!isNaN(latitude) && !isNaN(longitude)) {
+						const radius = Math.sqrt(count) * 500;
 
-						const circle = L.circle([lat, lng], {
+						const circle = L.circle([latitude, longitude], {
 							color: '#b22222',
 							fillColor: '#b22222',
 							fillOpacity: 0.6,
@@ -98,10 +110,17 @@
 						circle.bindPopup(`
 							<div class="map-popup">
 								<h3>${site.cemetery_name}</h3>
-								<div class="stat">${site.num_commemorated} fatalities</div>
+								<div class="stat">${count} fatalities</div>
 								<div class="divider"></div>
 								<div class="bio-list">
-									${site.fallen_list.map((f) => `<p>${f.bio}</p>`).join('')}
+									${
+										site.fallen_list
+											? site.fallen_list
+													.filter((f) => f.bio && f.bio !== 'null')
+													.map((f) => `<p>${f.bio}</p>`)
+													.join('')
+											: 'No details available'
+									}
 								</div>
 							</div>
 						`);
@@ -136,6 +155,27 @@
 </svelte:head>
 
 <main class="dashboard">
+	<div class="intro-header">
+		<h1>Staffordshire War Dead</h1>
+		<p class="intro-text">
+			I created a simple visualisation to remember the 7,000 or so men from the North Staffordshire
+			regiment who were killed during the first world war. This project began in 2012. I've used the
+			same data from the Commonwealth War Graves Commission using Python and Svelte. Users can
+			explore the map and click on those commemorated. I'm looking to develop the platform further.
+		</p>
+	</div>
+
+	<!-- Map -->
+	<section class="card map-section">
+		<div class="map-header-row">
+			<h3>Memorial Map</h3>
+			<p class="map-hint">
+				<span class="hint-icon">👆</span> Zoom in and click circles to see details
+			</p>
+		</div>
+		<div bind:this={mapContainer} id="map-container"></div>
+	</section>
+
 	<!-- Timeline Section -->
 	<section class="card timeline-section">
 		<header class="section-header">
@@ -356,12 +396,6 @@
 			</div>
 		</section>
 	</div>
-
-	<!-- Map -->
-	<section class="card map-section">
-		<h3>Memorial Map</h3>
-		<div bind:this={mapContainer} id="map-container"></div>
-	</section>
 </main>
 
 <style>
@@ -388,6 +422,47 @@
 		padding: 24px;
 		display: grid;
 		gap: 24px;
+	}
+
+	.intro-header {
+		margin-bottom: 8px;
+	}
+	h1 {
+		font-size: 2rem;
+		font-weight: 800;
+		color: #1a1a1a;
+		margin: 0 0 16px;
+	}
+	.intro-text {
+		max-width: 800px;
+		line-height: 1.6;
+		color: #444;
+		font-size: 1.1rem;
+		margin: 0;
+	}
+
+	.map-header-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 1rem;
+	}
+	.map-header-row h3 {
+		margin-bottom: 0;
+	}
+	.map-hint {
+		font-size: 0.85rem;
+		color: #666;
+		background: #f5f5f5;
+		padding: 4px 12px;
+		border-radius: 20px;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin: 0;
+	}
+	.hint-icon {
+		font-size: 1rem;
 	}
 
 	.card {
