@@ -159,9 +159,10 @@
 		<h1>Staffordshire War Dead</h1>
 		<p class="intro-text">
 			I created a simple visualisation to remember the 7,000 or so men from the North Staffordshire
-			regiment who were killed during the first world war. This project began in 2012. I've used the
-			same data from the Commonwealth War Graves Commission using Python and Svelte. Users can
-			explore the map and click on those commemorated. I'm looking to develop the platform further.
+			regiment who were killed during the first world war. This project began in 2012 and was
+			extended to cover the South Staffordshire Regiment. I've used the same data from the
+			Commonwealth War Graves Commission using Python and Svelte. Users can explore the map and
+			click on those commemorated. I'm looking to develop the platform further.
 		</p>
 	</div>
 
