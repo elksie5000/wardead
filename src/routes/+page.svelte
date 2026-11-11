@@ -83,10 +83,10 @@
 			// Initialize map - Center roughly between Manchester (West/Left) and Frontline (East/Right)
 			const map = L.map(mapContainer).setView([51.8, 0.4], 7);
 
-			L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+			L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 				attribution:
-					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>, Data: Commonwealth War Grave Commission',
-				maxZoom: 20
+					'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Data: Commonwealth War Grave Commission',
+				maxZoom: 19
 			}).addTo(map);
 
 			// Add circles
