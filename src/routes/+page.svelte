@@ -843,6 +843,9 @@
 		overflow: hidden;
 		background: #f0f0f0;
 	}
+	:global(.leaflet-tile-pane) {
+		filter: grayscale(85%) brightness(105%) contrast(92%);
+	}
 	:global(.map-popup) {
 		font-family: 'Inter', sans-serif;
 		min-width: 200px;
